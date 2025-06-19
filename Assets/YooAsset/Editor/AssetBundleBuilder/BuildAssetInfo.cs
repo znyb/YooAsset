@@ -129,5 +129,10 @@ namespace YooAsset.Editor
         {
             return _referenceBundleNames.Count;
         }
+
+        public void ClearBundleName()
+        {
+            BundleName = null;
+        }
     }
 }

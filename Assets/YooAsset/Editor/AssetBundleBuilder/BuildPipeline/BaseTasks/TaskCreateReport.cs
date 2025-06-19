@@ -40,7 +40,7 @@ namespace YooAsset.Editor
                 // 构建参数
                 buildReport.Summary.ClearBuildCacheFiles = buildParameters.ClearBuildCacheFiles;
                 buildReport.Summary.UseAssetDependencyDB = buildParameters.UseAssetDependencyDB;
-                buildReport.Summary.EnableSharePackRule = buildParameters.EnableSharePackRule;
+                buildReport.Summary.SharePackRule = buildParameters.SharePackRule == null ? "null" : buildParameters.SharePackRule.GetType().FullName;
                 buildReport.Summary.SingleReferencedPackAlone = buildParameters.SingleReferencedPackAlone;
                 buildReport.Summary.FileNameStyle = buildParameters.FileNameStyle;
                 buildReport.Summary.EncryptionClassName = buildParameters.EncryptionServices == null ? "null" : buildParameters.EncryptionServices.GetType().FullName;

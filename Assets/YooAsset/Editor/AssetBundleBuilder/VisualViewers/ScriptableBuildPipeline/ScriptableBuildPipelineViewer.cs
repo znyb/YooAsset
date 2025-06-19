@@ -109,7 +109,7 @@ namespace YooAsset.Editor
             buildParameters.BuildTarget = BuildTarget;
             buildParameters.PackageName = PackageName;
             buildParameters.PackageVersion = _buildVersionField.value;
-            buildParameters.EnableSharePackRule = true;
+            buildParameters.SharePackRule = new MiniDependSharePackRule();
             buildParameters.VerifyBuildingResult = true;
             buildParameters.FileNameStyle = fileNameStyle;
             buildParameters.BuildinFileCopyOption = buildinFileCopyOption;

@@ -64,7 +64,7 @@ namespace YooAsset.Editor
             BindListViewHeader("Build Params");
             BindListViewItem("Clear Build Cache Files", $"{buildReport.Summary.ClearBuildCacheFiles}");
             BindListViewItem("Use Asset Dependency DB", $"{buildReport.Summary.UseAssetDependencyDB}");
-            BindListViewItem("Enable Share Pack Rule", $"{buildReport.Summary.EnableSharePackRule}");
+            BindListViewItem("Share Pack Rule", $"{buildReport.Summary.SharePackRule}");
             BindListViewItem("Single Referenced Pack Alone", $"{buildReport.Summary.SingleReferencedPackAlone}");
             BindListViewItem("Encryption Class Name", buildReport.Summary.EncryptionClassName);
             BindListViewItem("FileNameStyle", $"{buildReport.Summary.FileNameStyle}");

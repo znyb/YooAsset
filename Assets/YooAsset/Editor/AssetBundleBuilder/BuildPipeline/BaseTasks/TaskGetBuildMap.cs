@@ -102,17 +102,18 @@ namespace YooAsset.Editor
             }
 
             // 7. 计算共享资源的包名
-            if (buildParameters.EnableSharePackRule)
+            var sharePackRule = buildParameters.SharePackRule;
+            if (sharePackRule != null)
             {
-                PreProcessPackShareBundle(buildParameters, collectResult.Command, allBuildAssetInfos);
+                sharePackRule.PreProcessPackShareBundle(buildParameters, collectResult.Command, allBuildAssetInfos);
                 foreach (var buildAssetInfo in allBuildAssetInfos.Values)
                 {
                     if (buildAssetInfo.HasBundleName() == false)
                     {
-                        ProcessingPackShareBundle(buildParameters, collectResult.Command, buildAssetInfo);
+                        sharePackRule.ProcessingPackShareBundle(buildParameters, collectResult.Command, buildAssetInfo);
                     }
                 }
-                PostProcessPackShareBundle(buildParameters, collectResult.Command, allBuildAssetInfos);
+                sharePackRule.PostProcessPackShareBundle(buildParameters, collectResult.Command, allBuildAssetInfos);
             }
 
             // 8. 记录关键信息

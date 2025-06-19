@@ -63,9 +63,9 @@ namespace YooAsset.Editor
         public bool UseAssetDependencyDB = false;
 
         /// <summary>
-        /// 启用共享资源打包
+        /// 共享资源打包处理类
         /// </summary>
-        public bool EnableSharePackRule = false;
+        public ISharePackRule SharePackRule;
 
         /// <summary>
         /// 对单独引用的共享资源进行独立打包
