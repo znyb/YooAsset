@@ -67,15 +67,39 @@ namespace YooAsset.Editor
             EditorPrefs.SetString(key, buildinFileCopyParams);
         }
 
-        // EncyptionClassName
-        public static string GetPackageEncyptionClassName(string packageName, string buildPipeline)
+        // EncyptionServicesClassName
+        public static string GetPackageEncyptionServicesClassName(string packageName, string buildPipeline)
         {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionClassName";
-            return EditorPrefs.GetString(key, string.Empty);
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionServicesClassName";
+            return EditorPrefs.GetString(key, $"{typeof(EncryptionNone).FullName}");
         }
-        public static void SetPackageEncyptionClassName(string packageName, string buildPipeline, string encyptionClassName)
+        public static void SetPackageEncyptionServicesClassName(string packageName, string buildPipeline, string encyptionClassName)
         {
-            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionClassName";
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_EncyptionServicesClassName";
+            EditorPrefs.SetString(key, encyptionClassName);
+        }
+
+        // ManifestProcessServicesClassName
+        public static string GetPackageManifestProcessServicesClassName(string packageName, string buildPipeline)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestProcessServicesClassName";
+            return EditorPrefs.GetString(key, $"{typeof(ManifestProcessNone).FullName}");
+        }
+        public static void SetPackageManifestProcessServicesClassName(string packageName, string buildPipeline, string encyptionClassName)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestProcessServicesClassName";
+            EditorPrefs.SetString(key, encyptionClassName);
+        }
+
+        // ManifestRestoreServicesClassName
+        public static string GetPackageManifestRestoreServicesClassName(string packageName, string buildPipeline)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestRestoreServicesClassName";
+            return EditorPrefs.GetString(key, $"{typeof(ManifestRestoreNone).FullName}");
+        }
+        public static void SetPackageManifestRestoreServicesClassName(string packageName, string buildPipeline, string encyptionClassName)
+        {
+            string key = $"{Application.productName}_{packageName}_{buildPipeline}_ManifestRestoreServicesClassName";
             EditorPrefs.SetString(key, encyptionClassName);
         }
 

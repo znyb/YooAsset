@@ -44,15 +44,43 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 创建加密类实例
+        /// 创建资源包加密服务类实例
         /// </summary>
-        protected IEncryptionServices CreateEncryptionInstance()
+        protected IEncryptionServices CreateEncryptionServicesInstance()
         {
-            var encyptionClassName = AssetBundleBuilderSetting.GetPackageEncyptionClassName(PackageName, PipelineName);
-            var encryptionClassTypes = EditorTools.GetAssignableTypes(typeof(IEncryptionServices));
-            var classType = encryptionClassTypes.Find(x => x.FullName.Equals(encyptionClassName));
+            var className = AssetBundleBuilderSetting.GetPackageEncyptionServicesClassName(PackageName, PipelineName);
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IEncryptionServices));
+            var classType = classTypes.Find(x => x.FullName.Equals(className));
             if (classType != null)
                 return (IEncryptionServices)Activator.CreateInstance(classType);
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// 创建资源清单加密服务类实例
+        /// </summary>
+        protected IManifestProcessServices CreateManifestProcessServicesInstance()
+        {
+            var className = AssetBundleBuilderSetting.GetPackageManifestProcessServicesClassName(PackageName, PipelineName);
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IManifestProcessServices));
+            var classType = classTypes.Find(x => x.FullName.Equals(className));
+            if (classType != null)
+                return (IManifestProcessServices)Activator.CreateInstance(classType);
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// 创建资源清单解密服务类实例
+        /// </summary>
+        protected IManifestRestoreServices CreateManifestRestoreServicesInstance()
+        {
+            var className = AssetBundleBuilderSetting.GetPackageManifestRestoreServicesClassName(PackageName, PipelineName);
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IManifestRestoreServices));
+            var classType = classTypes.Find(x => x.FullName.Equals(className));
+            if (classType != null)
+                return (IManifestRestoreServices)Activator.CreateInstance(classType);
             else
                 return null;
         }
@@ -111,10 +139,14 @@ namespace YooAsset.Editor
                 AssetBundleBuilderSetting.SetPackageBuildinFileCopyOption(PackageName, PipelineName, (EBuildinFileCopyOption)enumField.value);
 
                 // 设置内置资源标签显隐
-                bool tagsFiledVisible = buildinFileCopyOption == EBuildinFileCopyOption.ClearAndCopyByTags || buildinFileCopyOption == EBuildinFileCopyOption.OnlyCopyByTags;
-                tagField.visible = tagsFiledVisible;
+                SetCopyBuildinFileTagsVisible(tagField);
             });
             UIElementsTools.SetElementLabelMinWidth(enumField, LabelMinWidth);
+        }
+        protected void SetCopyBuildinFileTagsVisible(TextField tagField)
+        {
+            var option = AssetBundleBuilderSetting.GetPackageBuildinFileCopyOption(PackageName, PipelineName);
+            tagField.visible = option == EBuildinFileCopyOption.ClearAndCopyByTags || option == EBuildinFileCopyOption.OnlyCopyByTags;
         }
         protected void SetCopyBuildinFileTagsField(TextField textField)
         {
@@ -149,35 +181,97 @@ namespace YooAsset.Editor
             });
             UIElementsTools.SetElementLabelMinWidth(toggle, LabelMinWidth);
         }
-        protected PopupField<Type> CreateEncryptionField(VisualElement container)
+        protected PopupField<Type> CreateEncryptionServicesField(VisualElement container)
         {
-            // 加密方法
-            var encryptionClassTypes = EditorTools.GetAssignableTypes(typeof(IEncryptionServices));
-            if (encryptionClassTypes.Count > 0)
+            // 资源包加密服务类
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IEncryptionServices));
+            if (classTypes.Count > 0)
             {
-                var encyptionClassName = AssetBundleBuilderSetting.GetPackageEncyptionClassName(PackageName, PipelineName);
-                int defaultIndex = encryptionClassTypes.FindIndex(x => x.FullName.Equals(encyptionClassName));
+                var className = AssetBundleBuilderSetting.GetPackageEncyptionServicesClassName(PackageName, PipelineName);
+                int defaultIndex = classTypes.FindIndex(x => x.FullName.Equals(className));
                 if (defaultIndex < 0)
                     defaultIndex = 0;
-                var encryptionField = new PopupField<Type>(encryptionClassTypes, defaultIndex);
-                encryptionField.label = "Encryption";
-                encryptionField.style.width = StyleWidth;
-                encryptionField.RegisterValueChangedCallback(evt =>
+                var popupField = new PopupField<Type>(classTypes, defaultIndex);
+                popupField.label = "Encryption Services";
+                popupField.style.width = StyleWidth;
+                popupField.RegisterValueChangedCallback(evt =>
                 {
-                    AssetBundleBuilderSetting.SetPackageEncyptionClassName(PackageName, PipelineName, encryptionField.value.FullName);
+                    AssetBundleBuilderSetting.SetPackageEncyptionServicesClassName(PackageName, PipelineName, popupField.value.FullName);
                 });
-                container.Add(encryptionField);
-                UIElementsTools.SetElementLabelMinWidth(encryptionField, LabelMinWidth);
-                return encryptionField;
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
             }
             else
             {
-                var encryptionField = new PopupField<Type>();
-                encryptionField.label = "Encryption";
-                encryptionField.style.width = StyleWidth;
-                container.Add(encryptionField);
-                UIElementsTools.SetElementLabelMinWidth(encryptionField, LabelMinWidth);
-                return encryptionField;
+                var popupField = new PopupField<Type>();
+                popupField.label = "Encryption Services";
+                popupField.style.width = StyleWidth;
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
+            }
+        }
+        protected PopupField<Type> CreateManifestProcessServicesField(VisualElement container)
+        {
+            // 资源清单加密服务类
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IManifestProcessServices));
+            if (classTypes.Count > 0)
+            {
+                var className = AssetBundleBuilderSetting.GetPackageManifestProcessServicesClassName(PackageName, PipelineName);
+                int defaultIndex = classTypes.FindIndex(x => x.FullName.Equals(className));
+                if (defaultIndex < 0)
+                    defaultIndex = 0;
+                var popupField = new PopupField<Type>(classTypes, defaultIndex);
+                popupField.label = "Manifest Process Services";
+                popupField.style.width = StyleWidth;
+                popupField.RegisterValueChangedCallback(evt =>
+                {
+                    AssetBundleBuilderSetting.SetPackageManifestProcessServicesClassName(PackageName, PipelineName, popupField.value.FullName);
+                });
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
+            }
+            else
+            {
+                var popupField = new PopupField<Type>();
+                popupField.label = "Manifest Process Services";
+                popupField.style.width = StyleWidth;
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
+            }
+        }
+        protected PopupField<Type> CreateManifestRestoreServicesField(VisualElement container)
+        {
+            // 资源清单加密服务类
+            var classTypes = EditorTools.GetAssignableTypes(typeof(IManifestRestoreServices));
+            if (classTypes.Count > 0)
+            {
+                var className = AssetBundleBuilderSetting.GetPackageManifestRestoreServicesClassName(PackageName, PipelineName);
+                int defaultIndex = classTypes.FindIndex(x => x.FullName.Equals(className));
+                if (defaultIndex < 0)
+                    defaultIndex = 0;
+                var popupField = new PopupField<Type>(classTypes, defaultIndex);
+                popupField.label = "Manifest Restore Services";
+                popupField.style.width = StyleWidth;
+                popupField.RegisterValueChangedCallback(evt =>
+                {
+                    AssetBundleBuilderSetting.SetPackageManifestRestoreServicesClassName(PackageName, PipelineName, popupField.value.FullName);
+                });
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
+            }
+            else
+            {
+                var popupField = new PopupField<Type>();
+                popupField.label = "Manifest Restore Services";
+                popupField.style.width = StyleWidth;
+                container.Add(popupField);
+                UIElementsTools.SetElementLabelMinWidth(popupField, LabelMinWidth);
+                return popupField;
             }
         }
         #endregion

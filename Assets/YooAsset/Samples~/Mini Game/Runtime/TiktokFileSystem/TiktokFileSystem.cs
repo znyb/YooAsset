@@ -1,10 +1,9 @@
 ﻿#if UNITY_WEBGL && DOUYINMINIGAME
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 using TTSDK;
-using System.Linq;
-using System;
 
 public static class TiktokFileSystemCreater
 {
@@ -103,6 +102,11 @@ internal class TiktokFileSystem : IFileSystem
     ///  自定义参数：解密方法类
     /// </summary>
     public IWebDecryptionServices DecryptionServices { private set; get; }
+
+    /// <summary>
+    /// 自定义参数：资源清单服务类
+    /// </summary>
+    public IManifestRestoreServices ManifestServices { private set; get; }
     #endregion
 
 
@@ -131,8 +135,9 @@ internal class TiktokFileSystem : IFileSystem
     }
     public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
     {
-        options.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
-        options.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        string mainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
+        string fallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        options.SetURL(mainURL, fallbackURL);
         var operation = new TTFSDownloadFileOperation(this, bundle, options);
         return operation;
     }
@@ -161,22 +166,26 @@ internal class TiktokFileSystem : IFileSystem
         {
             DecryptionServices = (IWebDecryptionServices)value;
         }
+        else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
+        {
+            ManifestServices = (IManifestRestoreServices)value;
+        }
         else
         {
             YooLogger.Warning($"Invalid parameter : {name}");
         }
     }
-    public virtual void OnCreate(string packageName, string rootDirectory)
+    public virtual void OnCreate(string packageName, string packageRoot)
     {
         PackageName = packageName;
-        _ttCacheRoot = rootDirectory;
+        _ttCacheRoot = packageRoot;
 
         if (string.IsNullOrEmpty(_ttCacheRoot))
         {
-            throw new System.Exception("请配置抖音小游戏的缓存根目录！");
+            throw new System.Exception("请配置小游戏的缓存根目录！");
         }
 
-        // 注意：CDN服务未启用的情况下，使用抖音WEB服务器
+        // 注意：CDN服务未启用的情况下，使用WEB服务器
         if (RemoteServices == null)
         {
             string webRoot = PathUtility.Combine(Application.streamingAssetsPath, YooAssetSettingsData.Setting.DefaultYooFolderName, packageName);

@@ -16,7 +16,9 @@ namespace YooAsset.Editor
         protected TemplateContainer Root;
         protected TextField _buildOutputField;
         protected TextField _buildVersionField;
-        protected PopupField<Type> _encryptionField;
+        protected PopupField<Type> _encryptionServicesField;
+        protected PopupField<Type> _manifestProcessServicesField;
+        protected PopupField<Type> _manifestRestoreServicesField;
         protected EnumField _compressionField;
         protected EnumField _outputNameStyleField;
         protected EnumField _copyBuildinFileOptionField;
@@ -43,9 +45,11 @@ namespace YooAsset.Editor
             _buildVersionField = Root.Q<TextField>("BuildVersion");
             SetBuildVersionField(_buildVersionField);
 
-            // 加密方法
-            var encryptionContainer = Root.Q("EncryptionContainer");
-            _encryptionField = CreateEncryptionField(encryptionContainer);
+            // 服务类
+            var popupContainer = Root.Q("PopupContainer");
+            _encryptionServicesField = CreateEncryptionServicesField(popupContainer);
+            _manifestProcessServicesField = CreateManifestProcessServicesField(popupContainer);
+            _manifestRestoreServicesField = CreateManifestRestoreServicesField(popupContainer);
 
             // 压缩方式选项
             _compressionField = Root.Q<EnumField>("Compression");
@@ -58,6 +62,7 @@ namespace YooAsset.Editor
             // 首包文件拷贝参数
             _copyBuildinFileTagsField = Root.Q<TextField>("CopyBuildinFileParam");
             SetCopyBuildinFileTagsField(_copyBuildinFileTagsField);
+            SetCopyBuildinFileTagsVisible(_copyBuildinFileTagsField);
 
             // 首包文件拷贝选项
             _copyBuildinFileOptionField = Root.Q<EnumField>("CopyBuildinFileOption");
@@ -116,7 +121,9 @@ namespace YooAsset.Editor
             buildParameters.CompressOption = compressOption;
             buildParameters.ClearBuildCacheFiles = clearBuildCache;
             buildParameters.UseAssetDependencyDB = useAssetDependencyDB;
-            buildParameters.EncryptionServices = CreateEncryptionInstance();
+            buildParameters.EncryptionServices = CreateEncryptionServicesInstance();
+            buildParameters.ManifestProcessServices = CreateManifestProcessServicesInstance();
+            buildParameters.ManifestRestoreServices = CreateManifestRestoreServicesInstance();
 
             BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);
